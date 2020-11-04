@@ -1,12 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import SampleComponent from '../components/SampleComponent';
+import { StyleSheet, View } from 'react-native';
 
 const MainScreen = () => {
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
+      <View>
+      </View>
     </View>
   );
 }
