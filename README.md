@@ -21,6 +21,9 @@
 
 ## Start the sample project
 
+Go to the project folder
+
+`cd todo-app`
 
 Download the dependencies with
 
