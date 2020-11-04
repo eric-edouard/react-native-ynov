@@ -78,12 +78,17 @@ Start the project with
 > Display all the tasks in the state using the ToDoItem component.
 
 
+> **Exercise 4**
+> 
+> Allow the user to set a task to done or not done. 
+
+> **Exercise 5**
+> 
+> Allow the user to create and delete a Task. 
 
 **7 - useEffect**
 
-
-
-> **Exercise 4**
+> **Exercise 6**
 > 
 > Use the useEffect hooks to save the to do list in the async store.
 > 

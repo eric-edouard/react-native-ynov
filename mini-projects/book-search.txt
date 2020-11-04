@@ -1,0 +1,4 @@
+Write an app that allows users to search for books using the Google Book API.
+On search, the app should display a list of the search results with the book thumbnail, title, author, year, language and description.
+
+On press on a result, the app shoud display a more detailed view of the book with all the information you deem necessary.
