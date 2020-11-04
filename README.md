@@ -19,15 +19,7 @@
 [Installation - Expo Documentation](https://docs.expo.io/get-started/installation/)
 
 
-
-
-
 ## Start the sample project
-
-Go to the project folder
-
-`cd todo-app`
-
 
 
 Download the dependencies with
