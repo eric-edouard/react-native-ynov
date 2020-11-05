@@ -1,18 +1,21 @@
 import React from 'react'
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
 type Props = {
 	title: string;
 	isDone?: boolean;
+	toggleTask: () => void
 }
 
-const TodoItem: React.FC<Props> = (props) => {
+const TodoItem: React.FC<Props> = ({ title, isDone, toggleTask }) => {
 
 	return (
 		<View style={styles.todo}>
-			<MaterialIcons name={props.isDone ? "check-box" : "check-box-outline-blank"} size={24} color="black" />
-			<Text style={styles.title}>{props.title}</Text>
+			<TouchableOpacity onPress={toggleTask}>
+				<MaterialIcons name={isDone ? "check-box" : "check-box-outline-blank"} size={24} color="black" />
+			</TouchableOpacity>
+			<Text style={styles.title}>{title}</Text>
 		</View>
 	)
 }

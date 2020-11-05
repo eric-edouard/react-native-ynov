@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, SafeAreaView, Text, Button } from 'react-native';
+import { StyleSheet, View, SafeAreaView, Text, Button, TouchableOpacity, TextInput } from 'react-native';
 import Header from '../components/Header'
 import TodoItem from '../components/TodoItem';
 
@@ -26,6 +26,13 @@ const defaultTasks: Todo[] = [
 
 const MainScreen = () => {
   const [taskList, setTaskList] = useState<Todo[]>(defaultTasks)
+  const [newTask, setNewTask] = useState<string>('')
+
+  const toggleTask = (index: number) => {
+    const newTaskList = taskList
+    newTaskList[index].isDone = !newTaskList[index].isDone
+    setTaskList([...newTaskList])
+  }
 
   return (
     <View style={styles.container}>
@@ -33,13 +40,21 @@ const MainScreen = () => {
       <SafeAreaView style={styles.container}>
         <Header />
         <View style={styles.taskList}>
-          {taskList.map(task => <TodoItem key={task.title} title={task.title} isDone={task.isDone} />)}
+          {taskList.map((task, index) =>
+            <TodoItem
+              key={task.title}
+              title={task.title}
+              isDone={task.isDone}
+              toggleTask={() => toggleTask(index)}
+            />
+          )}
         </View>
-        <Button title="Add to do" onPress={() =>
-          setTaskList([...taskList, {
-            title: "to do",
-            isDone: false
-          }])} />
+        <TextInput
+          style={styles.input}
+          value={newTask}
+          onChangeText={setNewTask}
+        />
+        <Button title="add task" onPress={() => null} />
       </SafeAreaView>
     </View>
   );
@@ -67,7 +82,13 @@ const styles = StyleSheet.create({
   },
   taskList: {
     padding: 8
+  },
+  input: {
+    fontSize: 22,
+    borderWidth: 1,
+    borderColor: 'grey'
   }
+
 });
 
 export default MainScreen
