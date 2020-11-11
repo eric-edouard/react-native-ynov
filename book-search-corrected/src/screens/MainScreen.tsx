@@ -1,40 +1,49 @@
 import axios from 'axios';
-import { querySelectorByType } from 'epubjs/types/utils/core';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import BookItem from '../components/BookItem';
-
-// axios.get(`https://www.googleapis.com/books/v1/volumes?q=`)
+import EmptyListPlaceholder from '../components/EmptyListPlaceholder';
 
 const MainScreen = () => {
 
   const [query, setquery] = useState<string>('')
   const [books, setbooks] = useState<any[]>([])
 
-  const fetchBooks = async () => {
+
+  const onPressSearch = async () => {
+    if (query === '') {
+      setbooks([])
+      return
+    }
     const res = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${query}`)
     setbooks(res.data.items)
   }
 
-  console.log(books)
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
       <SafeAreaView>
         <Text style={styles.title}>Search a Book</Text>
-        <TextInput style={styles.searchInput} value={query} onChangeText={setquery} />
-        <TouchableOpacity style={styles.searchButton} onPress={fetchBooks}>
+        <TextInput value={query} onChangeText={setquery} style={styles.searchInput} />
+        <TouchableOpacity style={styles.searchButton} onPress={onPressSearch}>
           <Text style={styles.searchButtonText}>SEARCH</Text>
         </TouchableOpacity>
-        {books.map(book =>
-          <BookItem
-            title={book.volumeInfo.title}
-            author={""}
-            description={book.volumeInfo.description}
-            thumbnailUrl={book.volumeInfo.imageLinks?.thumbnail}
-          />)
-        }
+        <FlatList
+          data={books}
+          ListEmptyComponent={<EmptyListPlaceholder />}
+          renderItem={({ item, index }) => {
+            console.log(item)
+            return (
+              <BookItem
+                thumbnailUrl={item.volumeInfo.imageLinks?.thumbnail}
+                title={item.volumeInfo.title}
+                description={item.volumeInfo.description}
+                author={item.volumeInfo.authors?.map((as: string) => as.replace(/,/g, '')).join(', ')}
+              />
+            )
+          }}
+        />
       </SafeAreaView>
     </View>
   );
@@ -45,10 +54,6 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     fontSize: 42,
     padding: 16,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
   },
   searchInput: {
     fontWeight: '500',
@@ -72,6 +77,10 @@ const styles = StyleSheet.create({
   list: {
     padding: 16,
     display: 'flex'
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
   },
 });
 
