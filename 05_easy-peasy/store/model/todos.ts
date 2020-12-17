@@ -1,14 +1,8 @@
 import { Action, action, Thunk, thunk } from 'easy-peasy'
 import firebase from '../../firebase/firebase'
 import { StoreModel } from '.'
-
-type Todo = {
-	id: string
-	isDone: boolean
-	task: string
-}
-
-type TodoRemote = Omit<Todo, 'id'>
+import { Todo, TodoRemote } from '../../types'
+import services from '../../services'
 
 export interface TodoModel {
 	/**
@@ -24,7 +18,7 @@ export interface TodoModel {
 	/**
 	 * Thunks: functions that call actions
 	 */
-	fetchTodos: Thunk<TodoModel, void, void, StoreModel, Promise<void>>
+	listenTodos: Thunk<TodoModel, void, void, StoreModel, () => void>
 	createTodo: Thunk<TodoModel, { task: string }, void, StoreModel, Promise<void>>
 	setDone: Thunk<TodoModel, { id: string, isDone: boolean }, void, StoreModel, Promise<void>>
 }
@@ -36,13 +30,17 @@ const todoModel: TodoModel = {
 		return ({ todos: [...payload] })
 	}),
 
-	fetchTodos: thunk(async (actions, payload, { getState, getStoreActions }) => {
-		const snapShot = await firebase.firestore().collection('todos').get()
-		const todos = snapShot.docs.map(d => {
-			return ({ ...d.data(), id: d.id }) as Todo
-		})
-		console.log({ todos })
-		actions.setTodos(todos)
+	listenTodos: thunk((actions) => {
+		const unsubscribe = firebase.firestore().collection('todos').onSnapshot(
+			(onNext) => {
+				const todos = onNext.docs.map(d => {
+					return ({...d.data(), id: d.id }) as Todo
+				})
+				actions.setTodos(todos)
+			},
+			(onError) => console.warn("listenTodos error: ", onError)
+		)
+		return unsubscribe
 	}),
 
 	createTodo: thunk(async (actions, payload, { getState }) => {
@@ -55,28 +53,13 @@ const todoModel: TodoModel = {
 		}
 
 		// Create the todo on the server side
-		const res = await firebase.firestore().collection('todos').add(todoRemote)
+		services.todoService.createTodo(todoRemote)
 
-		// Create the local todo object
-
-		const todo: Todo = {
-			...todoRemote,
-			id: res.id
-		}
-
-		// add it to the current state
-		actions.setTodos([...getState().todos, todo])
 	}),
 
 	setDone: thunk(async (actions, payload, { getState }) => {
 		const { id, isDone } = payload
-		const todos = getState().todos
-
-		const index = todos.findIndex(t => t.id === id)
-		todos[index].isDone = isDone
-		actions.setTodos(todos)
-
-		await firebase.firestore().collection('todos').doc(id).update({ isDone })
+		services.todoService.setDone(id, isDone)
 	})
 
 }

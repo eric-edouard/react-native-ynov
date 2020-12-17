@@ -16,10 +16,11 @@ const MainScreen: React.FC<Props> = (props) => {
 	const todos = useStoreState(state => state.todos.todos)
 
 	const setTheme = useStoreActions(actions => actions.theme.setTheme)
-	const fetchTodos = useStoreActions(actions => actions.todos.fetchTodos)
+	const listenTodos = useStoreActions(actions => actions.todos.listenTodos)
 
 	useEffect(() => {
-		fetchTodos()
+		const unsubscribe = listenTodos()
+		return (() => unsubscribe())
 	}, [])
 	
 	return (
