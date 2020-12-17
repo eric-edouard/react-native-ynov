@@ -1,3 +1,0 @@
-Write a tic-tac-toe game in React Native.
-
-The game should be playable in PVP.

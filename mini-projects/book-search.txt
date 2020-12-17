@@ -1,3 +1,0 @@
-Write an app that allows users to search for books using the Google Book API.
-On search, the app should display a list of the search results with the book thumbnail, title, author, description.
-You should use separate the differnt parts of the UI in components to make your code clean and modular.
